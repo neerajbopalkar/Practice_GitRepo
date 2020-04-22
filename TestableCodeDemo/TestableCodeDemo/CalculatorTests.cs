@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Configuration;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,7 @@ namespace TestableCodeDemo
     {
         //SUT
         private Calculator _calculator;
+        public IConfiguration Configuration { get; set; }
 
         /// <summary>
         /// Method called immediately before each test is run
@@ -19,6 +21,10 @@ namespace TestableCodeDemo
         public void SetUp()
         {
             _calculator = new Calculator();
+            var configurationBuilder = new ConfigurationBuilder()
+        .AddJsonFile("appSettings.json");
+       
+            Configuration = configurationBuilder.Build();
         }
 
         [Test]
@@ -32,6 +38,16 @@ namespace TestableCodeDemo
 
             //Below will fail test case
             //Assert.That(result, Is.EqualTo(2.50m));
+        }
+
+        [Test]
+        public void TestConfigMock()
+        {
+            var result = _calculator.ConfigTester(Configuration);
+
+
+            Assert.That(result, Is.EqualTo("testValue"));
+
         }
 
     }
